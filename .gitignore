@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # History files
 .Rhistory
 .Rapp.history
@@ -44,4 +44,3 @@ vignettes/*.pdf
 .Rhistory
 .RData
 .Ruserdata
->>>>>>> initial commit
