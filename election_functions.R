@@ -31,19 +31,20 @@ check_metadata <- function(wahldaten) {
 # was kann weg? stimmart, bezirksnummer, ostwest, bundestagswahlkreis
 
 polish_metadata <- function(wahldaten) {
-  BVV16 %>% 
-    select(c("bezirk" = "Bezirksname", "ah_wahlkreis" = "Abgeordneten-\r\nhauswahlkreis", 
-             "wahlberechtigt" = "Wahlberechtigte insgesamt") | matches("Wähle.*") &
+  wahldaten %>% 
+    select(c("Bezirk" = "Bezirksname", "AH_Wahlkreis" = "Abgeordneten-\r\nhauswahlkreis", 
+             "wahlberechtigt" = "Wahlberechtigte insgesamt") | matches("$Wähle.*") &
              !matches(".*B1") | 
              c("gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen") | 
              "SPD":last_col()) %>% 
-    rename("wählende" = 4) %>% 
+    rename("Wählende" = 4) %>% 
+    mutate(across(-1, as.numeric)) %>% 
     return()
 }
 
 summarize_across_wahlkreise <- function(wahldaten) {
   wahldaten %>% polish_metadata() %>% 
-    group_by(bezirk, ah_wahlkreis) %>% 
-    summarize_all(sum) %>% 
-    return()
+    group_by(Bezirk, AH_Wahlkreis) %>% 
+    summarize(across(everything(),sum)) %>% 
+    return() # still grouped by bezirk
 }
