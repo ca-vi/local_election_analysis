@@ -1,36 +1,34 @@
 library(tidyverse)
 source("0_read_berlin_wahldaten.R")
+source("election_functions.R")
 
-# data tidying
-# what info do I need for Spandau BVV?
-# Adresse scheint die Wahllokalnummer zu sein
-# Stimmart ist trivial
-# Bezirksnummer und Bezirksname sind redundant
-# Wahlbezirk geht in Spandau von 1 bis 5 und ist durchnummeriert
-# Wahlbezirksart ist unterteilt in Briefwahlbezirk und Urnenwahlbezirk
-# bei 21 und 23 kommt noch Briefwahlbezirk dazu
-# Abgeordnetenhaus- und Bundeswahlkreis jeweils "Heimatwahlkreis" der DKs
-# Berlin Ost-West ist trivial in Spandau, aber natürlich spannend berlinweit
-# wahlberechtigte insgesamt klar, scheint nochmal in A1,A2 (und ganz selten A3) unterteilt zu sein?
-# Wähler (aktive), Wähler B1 (davon per Brief?), sowie davon gültig/ungültig
+bind_rows(BVV23 %>% summarize_across_wahlkreise(),
+          BVV21 %>% summarize_across_wahlkreise(),
+          BVV16 %>% summarize_across_wahlkreise(), 
+          .id = "year") %T>% assign(x = "BVV") %>% 
+  mutate(year = case_when(year == 1 ~ 2016, 
+                          year == 2 ~ 2021, 
+                          year == 3 ~ 2023)) %>% 
+  glimpse()
 
-BVV21 %>% filter(Bezirksname == "Spandau") %>% pull(Briefwahlbezirk) %>% table()
+# Parteien
+parteiliste <- unique(c(names(BVV16)[c(18:27,37,66)],
+                        names(BVV21)[c(19:29,31,33,45,48)],
+                        names(BVV23)[c(19:29,31,32,44,47)]))
 
-names(BVV16)
-(namelist16 <- names(BVV16)[c(18:27,37,66)])
 
-names(BVV21)
-(namelist21 <- names(BVV21)[c(19:29,31,33,45,48)])
+# was will ich? (purpose)
+# absolute und relative stimmen. Meine Hypothese ist, dass extrem viel Potenzial
+# liegen geblieben ist. Wir sollten nicht auf relative Mehrheiten schauen, 
+# sondern höher zielen.
 
-names(BVV23)[44] <- "WsB Spandau"
-names(BVV23)[47] <- "WisS"
-names(BVV23)
-(namelist23 <- names(BVV23)[c(19:29,31,32,44,47)])
+#histogram wahlbeteiligung in spandau
+BVV23 %>% filter(Bezirksname == "Spandau") %>% pull("Wahlberechtigte insgesamt") %>% summary()
+BVV23 %>% filter(`Wahlberechtigte insgesamt` != 0) %>% mutate(wahlbeteiligung = `Wählende` / `Wahlberechtigte insgesamt`) %>%
+  pull(wahlbeteiligung) %>% summary()
+BVV23 %>% filter(Bezirksname == "Spandau") %>% 
+  ggplot(aes(x = "Wählende")) + geom_histogram()
 
-for (name in names(BVV23)[1:10]){
-  print(name)
-  print(BVV23) %>% pull(name) %>% table() %>% print()
-}
 
 BVV23 %>% filter(Bezirksname == "Spandau") %>% pull("GRÜNE") %>% summary()
 BVV23 %>% filter(Bezirksname == "Spandau") %>% pull("Gültige Stimmen") %>% summary()
