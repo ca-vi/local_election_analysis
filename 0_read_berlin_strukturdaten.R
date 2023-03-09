@@ -1,4 +1,4 @@
-struktur <- readxl::read_excel("DL_BE_AGH2023_Strukturdaten.xlsx", sheet = "Strukturdaten")
+get_struktur <- function() readxl::read_excel("DL_BE_AGH2023_Strukturdaten.xlsx", sheet = "Strukturdaten")
 # struktur %>% glimpse() 
 
 # BVV21 %>% filter(Wahlbezirksart == "W") %>% dim()

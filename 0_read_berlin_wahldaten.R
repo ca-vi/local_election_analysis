@@ -1,16 +1,21 @@
 
-AGH23_erststimme  <- readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "AGH_W1")
-AGH23_zweitstimme <- readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "AGH_W2")
-BVV23             <- readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "BVV")
+get_AGH23_erststimme  <- function() readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "AGH_W1")
+get_AGH23_zweitstimme <- function() readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "AGH_W2")
+get_BVV23             <- function() { 
+  df <- readxl::read_excel("DL_BE_AGHBVV2023.xlsx", sheet = "BVV")
+  names(df)[names(df) == "WB WsB Spandau"] <- "WsB Spandau"
+  names(df)[names(df) == "WB WisS"] <- "WisS"
+  return(df)
+}
 
-AGH21_erststimme  <- readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "AGH_W1")
-AGH21_zweitstimme <- readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "AGH_W2")
-BVV21             <- readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "BVV")
+get_AGH21_erststimme  <- function() readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "AGH_W1")
+get_AGH21_zweitstimme <- function() readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "AGH_W2")
+get_BVV21             <- function() readxl::read_excel("DL_BE_AGHBVV2021.xlsx", sheet = "BVV")
 
-AGH16_erststimme  <- readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "Erststimme")
-AGH16_zweitstimme <- readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "Zweitstimme")
-BVV16             <- readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "BVV")
-
-BVV16[,7] <- AGH16_zweitstimme[,7]
-names(BVV23)[names(BVV23) == "WB WsB Spandau"] <- "WsB Spandau"
-names(BVV23)[names(BVV23) == "WB WisS"] <- "WisS"
+get_AGH16_erststimme  <- function() readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "Erststimme")
+get_AGH16_zweitstimme <- function() readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "Zweitstimme")
+get_BVV16             <- function() {
+  df <- readxl::read_excel("DL_BE_EE_WB_AH2016.xlsx", sheet = "BVV")
+  df[,7] <- get_AGH16_zweitstimme()[,7]
+  return(df)
+}

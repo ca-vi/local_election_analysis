@@ -14,28 +14,17 @@ check_metadata <- function(wahldaten) {
   }
 }
 
+# preprocess
+#####
 # data tidying
-# what info do I need for Spandau BVV?
-# Adresse scheint die Wahllokalnummer zu sein
-# Stimmart ist trivial
-# Bezirksnummer und Bezirksname sind redundant
-# Wahlbezirk geht in Spandau von 1 bis 5 und ist durchnummeriert
-# Wahlbezirksart ist unterteilt in Briefwahlbezirk und Urnenwahlbezirk
-# bei '21 und '23 kommt noch Briefwahlbezirk dazu
-# Abgeordnetenhaus- und Bundeswahlkreis jeweils "Heimatwahlkreis" der DKs
-# Berlin Ost-West ist trivial in Spandau, aber natürlich spannend berlinweit
-# wahlberechtigte insgesamt klar, ist unterteilt in A1 ohne wahlschein
-# A2 mit wahlschein, A3 am Wahltag einen wahlschein
-# Wähler (aktive), Wähler B1 (davon per Brief?), sowie davon gültig/ungültig
-
-# was kann weg? stimmart, bezirksnummer, ostwest, bundestagswahlkreis
-
+# what info do I need?
 polish_data_names <- function(data) {
   data %>% 
     select(c("Bezirk" = "Bezirksname", "AH_Wahlkreis" = matches("^Abgeordneten.*hauswahlkreis")) | 
              any_of(c("wahlberechtigt" = "Wahlberechtigte insgesamt", "Wählende" = matches("^Wähle(r|nde)$"),
              "gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen")) | 
              matches("(SPD|Einwohner Anzahl)"):last_col()) %>% 
+    # works with wahl und struktur
     mutate(across(-1, as.numeric)) %>% 
     return()
 }
@@ -46,3 +35,22 @@ summarize_across_ah_wahlkreise <- function(data) {
     summarize(across(everything(), sum)) %>% 
     return() # still grouped by Bezirk
 }
+
+get_BVV_ah <- function() {
+  BVV23 <- get_BVV23()
+  BVV21 <- get_BVV21()
+  BVV16 <- get_BVV16()
+  parteiliste <- unique(c(names(BVV16)[c(18:27,37,66)],
+                          names(BVV21)[c(19:29,31,33,45,48)],
+                          names(BVV23)[c(19:29,31,32,44,47)]))
+  # das sind die Parteien, die in Spandau mindestens eine Stimme haben
+  bind_rows(BVV23 %>% summarize_across_ah_wahlkreise(),
+            BVV21 %>% summarize_across_ah_wahlkreise(),
+            BVV16 %>% summarize_across_ah_wahlkreise(), 
+            .id = "Jahr") %>% 
+    mutate(Jahr = case_when(Jahr == "1" ~ 2016, 
+                            Jahr == "2" ~ 2021, 
+                            Jahr == "3" ~ 2023)) %>% 
+    select(Jahr:ungültig | any_of(parteiliste)) %>% 
+    return()
+}  

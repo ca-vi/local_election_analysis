@@ -2,26 +2,12 @@ library(tidyverse)
 source("0_read_berlin_wahldaten.R")
 source("election_functions.R")
 
-# preprocess
-#####
-# Parteien 
-parteiliste <- unique(c(names(BVV16)[c(18:27,37,66)],
-                        names(BVV21)[c(19:29,31,33,45,48)],
-                        names(BVV23)[c(19:29,31,32,44,47)]))
-bind_rows(BVV23 %>% summarize_across_ah_wahlkreise(),
-          BVV21 %>% summarize_across_ah_wahlkreise(),
-          BVV16 %>% summarize_across_ah_wahlkreise(), 
-          .id = "Jahr") %>% 
-  mutate(Jahr = case_when(Jahr == "1" ~ 2016, 
-                          Jahr == "2" ~ 2021, 
-                          Jahr == "3" ~ 2023)) %>% 
-  select(Jahr:ungültig | any_of(parteiliste)) -> BVV
-
 # was will ich? (purpose)
 # Wahlbeteiligung anschauen, Stimmen anschauen, Zeitverlauf jeweils
 # nur auf relative Prozentpunkte zu schauen ist zu klein gedacht
 # Strukturdaten zeigen bevölkerungssituation in spandau nicht hilfreich?
 
+BVV <- get_BVV_ah()
 #####
 # Wahlbeteiligung
 #####
