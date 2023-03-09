@@ -8,9 +8,9 @@ source("election_functions.R")
 parteiliste <- unique(c(names(BVV16)[c(18:27,37,66)],
                         names(BVV21)[c(19:29,31,33,45,48)],
                         names(BVV23)[c(19:29,31,32,44,47)]))
-bind_rows(BVV23 %>% summarize_across_wahlkreise(),
-          BVV21 %>% summarize_across_wahlkreise(),
-          BVV16 %>% summarize_across_wahlkreise(), 
+bind_rows(BVV23 %>% summarize_across_ah_wahlkreise(),
+          BVV21 %>% summarize_across_ah_wahlkreise(),
+          BVV16 %>% summarize_across_ah_wahlkreise(), 
           .id = "Jahr") %>% 
   mutate(Jahr = case_when(Jahr == "1" ~ 2016, 
                           Jahr == "2" ~ 2021, 

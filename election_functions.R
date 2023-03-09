@@ -30,21 +30,19 @@ check_metadata <- function(wahldaten) {
 
 # was kann weg? stimmart, bezirksnummer, ostwest, bundestagswahlkreis
 
-polish_metadata <- function(wahldaten) {
-  wahldaten %>% 
-    select(c("Bezirk" = "Bezirksname", "AH_Wahlkreis" = "Abgeordneten-\r\nhauswahlkreis", 
-             "wahlberechtigt" = "Wahlberechtigte insgesamt") | matches("$Wähle.*") &
-             !matches(".*B1") | 
-             c("gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen") | 
-             "SPD":last_col()) %>% 
-    rename("Wählende" = 4) %>% 
+polish_data_names <- function(data) {
+  data %>% 
+    select(c("Bezirk" = "Bezirksname", "AH_Wahlkreis" = matches("^Abgeordneten.*hauswahlkreis")) | 
+             any_of(c("wahlberechtigt" = "Wahlberechtigte insgesamt", "Wählende" = matches("^Wähle(r|nde)$"),
+             "gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen")) | 
+             matches("(SPD|Einwohner Anzahl)"):last_col()) %>% 
     mutate(across(-1, as.numeric)) %>% 
     return()
 }
 
-summarize_across_wahlkreise <- function(wahldaten) {
-  wahldaten %>% polish_metadata() %>% 
+summarize_across_ah_wahlkreise <- function(data) {
+  data %>% polish_data_names() %>% 
     group_by(Bezirk, AH_Wahlkreis) %>% 
-    summarize(across(everything(),sum)) %>% 
-    return() # still grouped by bezirk
+    summarize(across(everything(), sum)) %>% 
+    return() # still grouped by Bezirk
 }
