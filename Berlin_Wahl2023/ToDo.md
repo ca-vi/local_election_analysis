@@ -11,7 +11,7 @@
 		- Ausländeranteil
 		- Unionsbürgeranteil
 		- Altersstruktur
-- Strukturdaten und Wahldaten korrellieren
+- [[Strukturdaten]] und Wahldaten korrellieren
 - Korrellierende Parameter visualisieren
 - Jupyter Notebook über GitHub hosten
 	- mit CI verbinden (push->new book)

@@ -19,11 +19,12 @@ check_metadata <- function(wahldaten) {
 # data tidying
 # what info do I need?
 polish_data_names <- function(data) {
-  data %>% 
+  data %>%
     select(c("Bezirk" = "Bezirksname", "AH_Wahlkreis" = matches("^Abgeordneten.*hauswahlkreis")) | 
-             any_of(c("wahlberechtigt" = "Wahlberechtigte insgesamt", "Wählende" = matches("^Wähle(r|nde)$"),
-             "gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen")) | 
-             matches("(SPD|Einwohner Anzahl)"):last_col()) %>% 
+             any_of(c("Wählende" = matches("^Wähle(r|nde)$"))) |
+             any_of(c("wahlberechtigt" = "Wahlberechtigte insgesamt", 
+                      "gültig" = "Gültige Stimmen", "ungültig" = "Ungültige Stimmen")) | 
+             matches("(SPD|Einwohner Anzahl)"):last_col()) %>%
     # works with wahl und struktur
     mutate(across(-1, as.numeric)) %>% 
     return()
@@ -32,7 +33,8 @@ polish_data_names <- function(data) {
 summarize_across_ah_wahlkreise <- function(data) {
   data %>% polish_data_names() %>% 
     group_by(Bezirk, AH_Wahlkreis) %>% 
-    summarize(across(everything(), sum)) %>% 
+    summarize(across(everything() & !matches("Prozent"), sum), 
+              across(matches("Prozent"), mean)) %>% 
     return() # still grouped by Bezirk
 }
 
