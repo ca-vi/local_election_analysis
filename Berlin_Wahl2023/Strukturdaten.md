@@ -1,0 +1,12 @@
+Interessante Punkte:
+- Alter
+	- unter/über 65 "Rentner"
+	- unter/über 60 "Boomer"
+	- unter 25 "GenZ"
+	- unter 35 "Millenials/GenY"
+	- unter 45 "GenX" (eigentlich müsste das bis 50 gehen, aber die Daten hab ich nicht)
+- Ausländeranteil
+- EU-Bürgeranteil
+- Deutsche mit Migrationshintergrund
+- Eingetragene Lebenspartnerschaft (ELP)
+- inSGB2 (Arbeitslosenquote, "Hartz4")
