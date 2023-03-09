@@ -1,0 +1,19 @@
+- [[Strukturdaten]] lesen
+- Wahldaten plotten
+	- Karten färben nach
+		- Wahlbeteiligung
+		- GRÜNE Stimmen
+		- Gewinn/Verlust Raten
+- Strukturdaten plotten
+	- Linienplots
+	- Karten färben nach
+		- SGB2
+		- Ausländeranteil
+		- Unionsbürgeranteil
+		- Altersstruktur
+- Strukturdaten und Wahldaten korrellieren
+- Korrellierende Parameter visualisieren
+- Jupyter Notebook über GitHub hosten
+	- mit CI verbinden (push->new book)
+- GitHub Wiki mit Obsidian verbinden?
+- Shiny Web-App und .io site über GitHub hosten?
